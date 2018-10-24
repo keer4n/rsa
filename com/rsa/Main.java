@@ -23,7 +23,7 @@ public class Main {
 		System.out.println("e(hex): " + e.toString(16));
 		System.out.println("d(hex): " + d.toString(16) + " (dec)" + d.toString());
 		
-		String message = "This is the secret message.";
+		String message = args[0];
 		BigInteger mf = new BigInteger(message.getBytes());
 		System.out.println("bitlength of message: " +mf.toString(2).length());
 		System.out.println("message: " + message);
