@@ -5,43 +5,51 @@ import java.util.Random;
 
 public class Main {
 	private static final int BITLENGTH = 2048;
-	
+	private static BigInteger p,q,n,phiN,e;
 	public static void main(String[] args) {
 		Random r = new Random();
-		BigInteger p = BigInteger.probablePrime(BITLENGTH,r);
-		BigInteger q = BigInteger.probablePrime(BITLENGTH,r);
-		BigInteger n = p.multiply(q);
-		BigInteger phiN = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+		p = BigInteger.probablePrime(BITLENGTH,r);
+		q = BigInteger.probablePrime(BITLENGTH,r);
+		n = p.multiply(q);
+		phiN = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
 		System.out.println("p: " + p.toString(16));
 		System.out.println("q: " + q.toString(16));
 		System.out.println("n: " + n.toString(16));
 		System.out.println("BitLength: " + n.toString(2).length());
 		
 		
-		BigInteger e = BigInteger.probablePrime(BITLENGTH,r);
+		e = BigInteger.probablePrime(BITLENGTH,r);
 		BigInteger d = e.modInverse(phiN);
-		System.out.println("e: " + e.toString(16));
+		System.out.println("e(hex): " + e.toString(16));
 		System.out.println("d(hex): " + d.toString(16) + " (dec)" + d.toString());
 		
-		//message is fed as integer how to send in ascii
-		String m1 = "kiran";
-		byte[] m = m1.getBytes();
-		BigInteger mf = new BigInteger("Kiran".getBytes());
-		System.out.println("bitlength of message: " +mf.bitCount());
-		System.out.println("print message in ascii?? :" + mf.toString());
-		BigInteger enc = myPow(mf,e,n);
-		System.out.println("encryption(hex): " + enc.toString(16) + " (dec)"+ enc.toString() + " bitlength: " + enc.toString(2).length() );
-		BigInteger dec = crt(enc,d,p,q,n);
-		System.out.println("decryption(hex): " + new String(dec.toByteArray()) + " (dec)");
-		System.out.println("print decrypted message in ascii?: " + dec.toString());
+		String message = "This is the secret message.";
+		BigInteger mf = new BigInteger(message.getBytes());
+		System.out.println("bitlength of message: " +mf.toString(2).length());
+		System.out.println("message: " + message);
+		BigInteger enc = encrypt(message);
+		System.out.println("encryption(hex): " + enc.toString(16) + " (dec)"+ enc.toString() + " bitlength: " + enc.toString(2).length());
+		
+		
+		BigInteger dec = decrypt(enc,d);
+		System.out.println("decryption: " + new String(dec.toByteArray()));
 		
 	}
 	
-	public static BigInteger crt(BigInteger dec, BigInteger d, BigInteger p, BigInteger q, BigInteger n) {
+	public static BigInteger encrypt(String msg) {
+		BigInteger msgInteger = new BigInteger(msg.getBytes());
+		if(msgInteger.toString(2).length() > BITLENGTH*2) {
+			System.out.println("ERROR: Message size greater than size of prime, exiting.");
+			System.exit(1);
+		}
+		return myPow(msgInteger,e,n);
+	}
 	
+	public static BigInteger decrypt(BigInteger enc, BigInteger d) {
 		
-		BigInteger yp = dec.mod(p);
-		BigInteger yq = dec.mod(q);
+		
+		BigInteger yp = enc.mod(p);
+		BigInteger yq = enc.mod(q);
 		
 		BigInteger dp = d.mod(p.subtract(BigInteger.ONE));
 		BigInteger dq = d.mod(q.subtract(BigInteger.ONE));
