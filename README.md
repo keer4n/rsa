@@ -1,4 +1,4 @@
-Implementation of Schoolbook RSA:
+Implementation of Textbook RSA:
 
 Run the jar file with a message and it will encrypt and decrypt the message showing the process.
 
